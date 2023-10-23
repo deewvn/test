@@ -2,22 +2,27 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Авторизация</ion-title>
+        <ion-title>Добавление товара</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content class="ion-padding" style="max-height: 80%">
       <form @submit.prevent="submitForm">
         <ion-item>
-          <ion-label>Логин</ion-label>
-          <ion-input @input="username = $event.target.value" type="text" required></ion-input>
+          <ion-label>title</ion-label>
+          <ion-input @input="title = $event.target.value" type="text" required></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label>Пароль</ion-label>
-          <ion-input @input="password = $event.target.value" type="password" required></ion-input>
+          <ion-label>description</ion-label>
+          <ion-input @input="description = $event.target.value" type="text" required></ion-input>
         </ion-item>
-        <ion-button expand="full" type="submit">Войти</ion-button>
+        <ion-button expand="full" type="submit">Добавить</ion-button>
       </form>
     </ion-content>
+    <ion-footer collapse="fade">
+      <ion-toolbar>
+        <ion-button @click="() => router.push(`/list`)">Назад</ion-button>
+      </ion-toolbar>
+    </ion-footer>
   </ion-page>
 </template>
 
@@ -27,21 +32,19 @@ import axios from 'axios';
 import { useRouter } from "vue-router";
 
 export default defineComponent({
-  name: 'Authorization',
+  name: 'Add',
   setup() {
-    const username = ref('');
-    const password = ref('');
+    const title = ref('');
+    const description = ref('');
     const router = useRouter();
     const submitForm = async () => {
       try {
-        const response = await axios.post('https://dummyjson.com/auth/login', {
-          username: username.value,
-          password: password.value,
+        const response = await axios.post('https://dummyjson.com/products/add', {
+          title: title.value,
+          description: description.value,
         });
-
         if (response.data) {
-          console.log('Authorization successful');
-          router.push('/list');
+          alert('Добавлено');
         }
       } catch (error) {
         console.error('Error:', error);
@@ -49,9 +52,10 @@ export default defineComponent({
     };
 
     return {
-      username,
-      password,
-      submitForm
+      title,
+      description,
+      submitForm,
+      router
     };
   },
 });

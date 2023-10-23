@@ -2,21 +2,19 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Список товаров</ion-title>
+        <ion-title>Товар</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content style="max-height: 80%">
-      <ion-list>
-        <ion-item v-for="item in items" :key="item.id" style="display: flex; flex-direction: column">
-          <ion-label>{{ item.title }}</ion-label>
-          <img :src="item.thumbnail" :alt="item.title" width="50"/>
-          <ion-label>{{ item.description }}</ion-label>
-        </ion-item>
-      </ion-list>
+      <ion-item>
+        <ion-label>{{ item?.title }}</ion-label>
+        <img :src="item?.thumbnail" :alt="item?.title" width="50"/>
+        <ion-label>{{ item?.description }}</ion-label>
+      </ion-item>
     </ion-content>
     <ion-footer collapse="fade">
       <ion-toolbar>
-        <ion-button @click="loadMore">Загрузить еще</ion-button>
+        <ion-button @click="() => router.push(`/list`)">Назад</ion-button>
       </ion-toolbar>
     </ion-footer>
   </ion-page>
@@ -25,32 +23,29 @@
 <script>
 import { defineComponent, ref } from 'vue';
 import axios from 'axios';
+import { useRoute, useRouter } from 'vue-router'
+
 
 export default defineComponent({
-  name: 'ItemList',
+  name: 'Item',
   setup() {
-    const items = ref([]);
-    const page = ref(1);
-
-    const fetchItems = async () => {
+    const item = ref(null);
+    const route = useRoute();
+    const router = useRouter();
+    const fetchItem = async () => {
       try {
-        const response = await axios.get(`https://dummyjson.com/products?skip=${page.value * 5}&limit=5`);
-        items.value = [...items.value, ...response.data.products];
+        const response = await axios.get(`https://dummyjson.com/products/${route.params.id}`);
+        item.value = response.data;
       } catch (error) {
         console.error('Error:', error);
       }
     };
 
-    const loadMore = () => {
-      page.value++;
-      fetchItems();
-    };
-
-    fetchItems();
+    fetchItem();
 
     return {
-      items,
-      loadMore,
+      item,
+      router
     };
   },
 });
